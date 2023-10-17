@@ -1,67 +1,98 @@
-# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
-# More GitHub Actions for Azure: https://github.com/Azure/actions
-# More info on Python, GitHub Actions, and Azure App Service: https://aka.ms/python-webapps-actions
+<!DOCTYPE html>
+<html lang="pl">
 
-name: Build and deploy Python app to Azure Web App - testujeapke
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formularz logowania</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+    <style>
+        body {
+            background-color: #e2e0e0;
+        }
 
-on:
-  push:
-    branches:
-      - main
-  workflow_dispatch:
+        .container {
+            margin-top: 150px;
+        }
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
+        .card {
+            border: none;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
 
-    steps:
-      - uses: actions/checkout@v4
+        .card-header {
+            background-color: #5a9c65;
+            color: #fff;
+            font-weight: bold;
+        }
 
-      - name: Set up Python version
-        uses: actions/setup-python@v1
-        with:
-          python-version: '3.11'
+        .btn-primary {
+            background-color: #5a9c65;
+            border: none;
+        }
 
-      - name: Create and start virtual environment
-        run: |
-          python -m venv venv
-          source venv/bin/activate
+        .btn-primary:hover {
+            background-color: #406b46;
+        }
 
-      - name: Install dependencies
-        run: pip install -r requirements.txt
+        /* Styl dla ikony i podtytułu */
+        .document-icon {
+            font-size: 80px;
+            text-align: center;
+            margin-bottom: 10px;
+            color: #234028;
+        }
 
-      # Optional: Add step to run tests here (PyTest, Django test suites, etc.)
-      - name: Zip artifact for deployment
-        run: zip release.zip ./* -r
+        .subtitle {
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 30px;
+        }
+    </style>
+</head>
 
-      - name: Upload artifact for deployment jobs
-        uses: actions/upload-artifact@v3
-        with:
-          name: python-app
-          path: |
-            release.zip
-            !venv/
+<body>
 
-  deploy:
-    runs-on: ubuntu-latest
-    needs: build
-    environment:
-      name: 'Production'
-      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+<div class="container">
+    <!-- Ikony dokumentu i podtytułu nad formularzem -->
+    <div class="document-icon"><i class="fas fa-file-alt"></i></div>
+    <div class="subtitle">Elektroniczny Obieg Dokumentów</div>
 
-    steps:
-      - name: Download artifact from build job
-        uses: actions/download-artifact@v3
-        with:
-          name: python-app
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-sign-in-alt"></i> Formularz logowania
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('login') }}" id="loginForm">
+                        <div class="form-group">
+                            <label for="user_name">Nazwa użytkownika <i class="fas fa-user"></i></label>
+                            <input type="text" class="form-control" id="user_name" name="user_name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="user_pass">Hasło <i class="fas fa-lock"></i></label>
+                            <input type="password" class="form-control" id="user_pass" name="user_pass" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Zaloguj się <i class="fas fa-sign-in-alt"></i></button>
+                    </form>
+                    <!-- Przycisk "Zapomniałem hasła" -->
+                    <a href="{{ url_for('password_reset') }}" class="btn btn-link mt-2">Zapomniałem hasła</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
-      - name: Unzip artifact for deployment
-        run: unzip release.zip
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script>
+    $('#loginForm').on('submit', function() {
+        $(this).find('button').html('Logowanie... <i class="fas fa-spinner fa-spin"></i>');
+    });
+</script>
 
-      - name: 'Deploy to Azure Web App'
-        uses: azure/webapps-deploy@v2
-        id: deploy-to-webapp
-        with:
-          app-name: 'testujeapke'
-          slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_7C2F0FCFAA2C4B00BC4FA589FBC3917B }}
+</body>
+</html>
